@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="css/YiXingGunDong.css"/>
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/YiXingGunDong.js"></script>
+</head>
+<body>
+<div class="carousel">
+    <div class="carousel_img">
+        <ul>
+            {% for good in goodsList %}
+                <li>
+                    <img src="img/1.jpg"/>
+                    <div class="mask"></div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="carousel_btn">
+        <a href="javascript:;" class="right_btn" id="right_btn"></a>
+        <a href="javascript:;" class="left_btn"></a>
+    </div>
+    <div class="circles">
+        <ol>
+            <li class="cur"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ol>
+    </div>
+</div>
+</body>
+
+<script>
+
+    rBtn = $('.right_btn')
+
+    onload = function () {
+        setInterval(click_rBtn, 4000)
+    }
+
+    function click_rBtn() {
+        rBtn.click()
+    }
+</script>
+</html>
+

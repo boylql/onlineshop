@@ -1,0 +1,57 @@
+<style>
+    body, button, input, select, textarea {
+        font: 13px/1 Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif;
+    }
+
+    .head-in {
+        font-size: 14px;
+    }
+</style>
+<div class="head">
+    <div class="head-in">
+        <ul class="options">
+            <li class="sub"><a href="/goods/">回到首页</a></li>
+            <li class="sub"><a href="/order/queryAll/">我的订单</a></li>
+            <li class="sub"><a href="/cart/queryAll/">我的购物车</a></li>
+        </ul>
+        {% if user %}
+            <div class="register">欢迎<a href="/user/center/" style="color: red">{{ user.uname }}</a></div>
+        {% else %}
+            <div class="register"><a href="/user/register/">免费注册</a></div>
+            <div class="sign"><a href="/user/login/">登录</a></div>
+        {% endif %}
+    </div>
+</div>
+<div class="search">
+    <ul class="items">
+        <li class="item">
+            <a href="/goods/discount/">
+                <img src="/static/1_09.png">
+                <p>限时抢购</p>
+            </a>
+        </li>
+        <li class="item">
+            <a href="/goods/IntelligentRecommendation/">
+                <img src="/static/1_11.png">
+                <p>智能推荐</p>
+            </a>
+        </li>
+        <li class="item">
+            <a href="/goods/">
+                <img src="/static/1_13.png">
+                <p>验货质检</p>
+            </a>
+        </li>
+    </ul>
+    <div class="input">
+        <form action="/goods/" method="GET" enctype="multipart/form-data">
+            <input type="" name="find" value="" placeholder="请输入你要查找的宝贝">
+            <input type="submit" value="提交"/>
+
+        </form>
+    </div>
+</div>
+{% csrf_token %}
+
+<script>
+</script>

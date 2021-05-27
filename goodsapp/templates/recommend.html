@@ -1,0 +1,29 @@
+<title>智能推荐页</title>
+{% block main %}
+    {% block headerjs %}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+        <link href="/static/style.css" rel="stylesheet" type="text/css">
+        <script src="/static/jquery-3.4.1.min.js"></script>
+    {% endblock %}
+    <body>
+    <div class="boxx">
+        <div class="box">
+            {% for good in goodsList %}
+                <div style="--i:{{ forloop.counter }}" goodsid = "{{ good.id }}"><a><img src="{{ good.gurl }}"></a></div>
+                {#            <img src="{{ good.gurl }}">#}
+            {% endfor %}
+            <h1 ><a  style="color: gray;text-decoration: none"  href="/goods/">回到首页</a></h1>
+        </div>
+    </div>
+
+    </body>
+
+{% endblock %}
+{% block footerjs %}
+    <script>
+        $('div.box').children('div').click(function () {
+            goodsid = $(this).attr('goodsid')
+            $(this).find("a").attr('href', '/goods/goodsdetails/'+goodsid);
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}
+    用户订单界面
+{% endblock %}
+
+{% block main %}
+    <style>
+        .biankuang {
+            border: 0.01px solid #000;
+            position: relative;
+        }
+
+        .go-zhi-fu {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 100px;
+            height: 30px;
+            background-color: #ff4d4d;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .go-zhi-fu:hover {
+            background-color: #fc1944;
+        }
+
+        .cartMain_hd .cartTop .list_con {
+            margin-right: 35px;
+        }
+
+        .go-que-ren {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 100px;
+            height: 30px;
+            background-color: #94df94;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+    <section class="cartMain">
+        <div class="cartMain_hd">
+            <ul class="order_lists cartTop">
+                <li class="list_con">商品信息</li>
+                <li class="list_info">商品参数</li>
+                <li class="list_price">单价</li>
+                <li class="list_amount">数量</li>
+                <li class="list_sum">金额</li>
+                <li class="list_op">状态</li>
+            </ul>
+        </div>
+        <div class="cartBox">
+            <div class="order_content">
+                {% for order in orderList %}
+                    <div class="biankuang">
+                        {% for orderitem in order.getOrderItem %}
+                            <ul style="position: relative;padding:0 5px;" class="order_lists" orderid="{{ order.id }}">
+                                <li class="list_con">
+                                    <div class="list_img"><a href="javascript:;"><img
+                                            src="{{ orderitem.getGoods.gurl }}" alt=""></a>
+                                    </div>
+                                    <div class="list_text"><a href="javascript:;">{{ orderitem.getGoods.gname }}</a>
+                                    </div>
+                                </li>
+                                <li class="list_info">
+                                    <p>颜色：</p>
+                                    <p>尺寸：</p>
+                                </li>
+                                <li class="list_price">
+                                    {% if orderitem.getGoods.price %}
+                                        <p class="price">￥{{ orderitem.getGoods.price }}</p>
+                                    {% else %}
+                                        <p class="price">￥{{ orderitem.getGoods.oldprice }}</p>
+                                    {% endif %}
+                                <li class="list_amount">
+                                    <p class="amount_box">{{ orderitem.count }}</p>
+                                </li>
+                                <li class="list_sum">
+                                    <p class="sum_price">￥{{ orderitem.getTotalPrice }}</p>
+                                </li>
+                                <li class="list_op">
+                                    <p class="del">{{ order.status }}</p>
+                                </li>
+                            </ul>
+                        {% endfor %}
+                        {% if order.status == '待支付' %}
+                            <div class="go-zhi-fu"><a>去支付</a></div>
+                        {% endif %}
+                        {% if order.status == '已发货' %}
+                            <div class="go-que-ren"><a>确认收货</a></div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    <section class="model_bg" style="display: none;"></section>
+    {% csrf_token %}
+{% endblock %}
+
+{% block footerjs %}
+    <script>
+        $('.go-zhi-fu').click(function () {
+            //orderid用于存放用户选中的订单编号
+            var orderid = $(this).parents('div.biankuang').find('.order_lists').attr('orderid')
+            $(this).find("a").attr('href', '/order/?orderid=' + orderid);
+        })
+        $('.go-que-ren').click(function () {
+            //orderid用于存放用户选中的订单编号
+            var orderid = $(this).parents('div.biankuang').find('.order_lists').attr('orderid')
+            $(this).find("a").attr('href', '/order/confirm/?orderid=' + orderid);
+        })
+    </script>
+{% endblock %}

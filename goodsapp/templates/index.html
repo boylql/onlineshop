@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}商品首页{% endblock %}
+{% block main %}
+    <div class="classes">
+        <ul class="classes-items">
+            {% for category in categoryList %}
+                <li class="items {% if category.id == cid %}active{% endif %}"><a
+                        href="/goods/category/{{ category.id }}">{{ category.cname }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="goods-model">
+        <div class="goods-content">
+            {% for goods in goodsList %}
+                <div class="good">
+                    <a href="/goods/goodsdetails/{{ goods.id }}">
+                        <img src="{{ goods.gurl }}" width="285px" height="285px">
+                        <p class="name">{{ goods.gname }}</p>
+                        <div class="price">
+                            {% if goods.price %}
+                                <p class="big" style="font-size: 15px">￥{{ goods.price }}</p>
+                                <s>{{ goods.oldprice }}</s>
+                            {% else %}
+                                <p class="big" style="font-size: 15px">￥{{ goods.oldprice }}</p>
+                            {% endif %}
+
+                        </div>
+                        {% if goods.price %}
+                            <div class="sale">
+                                特卖
+                            </div>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="pager" style="text-align: center; font-size: 16px; overflow: hidden; margin-top: 10px;">
+        {% if  goodsList.has_previous %}
+            <a href="/goods/category/{{ cid }}/page/{{ goodsList.previous_page_number }}"
+               style="display: inline-block; padding: 5px; margin: 5px;">上一页</a>
+        {% endif %}
+        {% for page in page_list %}
+            {% if page == num %}
+                <span style="display: inline-block; padding: 5px; margin: 5px; color: #ff0000; font-size: 25px">{{ page }}</span>
+            {% else %}
+                <a href="/goods/category/{{ cid }}/page/{{ page }}"
+                   style="display: inline-block; padding: 5px; margin: 5px;">{{ page }}</a>
+            {% endif %}
+
+        {% endfor %}
+        {% if  goodsList.has_next %}
+            <a href="/goods/category/{{ cid }}/page/{{ goodsList.next_page_number }}"
+               style="display: inline-block; padding: 5px; margin: 5px;">下一页</a>
+        {% endif %}
+
+    </div>
+{% endblock %}
+{% block footerjs %}{% endblock %}

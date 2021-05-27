@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% block title %}
+    用户地址管理界面
+{% endblock %}
+{% block headerjs %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
+    <link href="/static/assets/css/admin.css" rel="stylesheet" type="text/css">
+    <link href="/static/assets/css/amazeui.css" rel="stylesheet" type="text/css">
+    <link href="/static/assets/css/personal.css" rel="stylesheet" type="text/css">
+    <link href="/static/assets/css/addstyle.css" rel="stylesheet" type="text/css">
+    <script src="/static/assets/js/jquery.min.js" type="text/javascript"></script>
+    <script src="/static/assets/js/amazeui.js"></script>
+{% endblock %}
+
+{% block main %}
+    <div class="Bott">
+        <div class="wrapper clearfix" style="margin: 0 auto">
+            <div class="zuo fl" style="margin-left: 100px">
+                <h3>
+                    {% if profile %}
+                        <a href="/user/center/"><img src="{{ profile.purl }}" style="width: 80px;height: 80px"></a>
+                    {% else %}
+                        <a href="/user/center/"><img src="/static/tx.png" style="width: 80px;height: 80px"></a>
+                    {% endif %}
+                    <p class="clearfix"><span class="fl">[{{ user.uname }}]</span><span class="fr logout">[退出登录]</span>
+                    </p>
+                </h3>
+                <div>
+                    <ul>
+                        <li><a href="/order/queryAll/">我的订单</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="/user/address/">地址管理</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="/goods/">回到首页</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="you fl main-wrap">
+                <div class="user-address">
+                    <!--标题 -->
+                    <div class="am-cf am-padding">
+                        <div class="am-fl am-cf"><strong class="am-text-danger am-text-lg">地址管理</strong> / <small>Address&nbsp;list</small>
+                        </div>
+                    </div>
+                    <hr>
+                    <ul class="am-avg-sm-1 am-avg-md-3 am-thumbnails">
+                        {% for addrObj in addrList %}
+                            {% if addrObj.isdelete == 0 %}
+                                <li class="user-addresslist {% if addrObj.isdefault %}defaultAddr{% endif %}  ">
+                                    <span class="new-option-r" addrid="{{ addrObj.id }}"><i class="am-icon-check-circle"></i>默认地址</span>
+                                    <p class="new-tit new-p-re">
+                                        <span class="new-txt">{{ addrObj.aname }}</span>
+                                        <span class="new-txt-rd2">{{ addrObj.aphone }}</span>
+                                    </p>
+                                    <div class="new-mu_l2a new-p-re">
+                                        <p class="new-mu_l2cw">
+                                            <span class="title">地址：</span>
+                                            <span class="street">{{ addrObj.addr }}</span></p>
+                                    </div>
+                                    <div class="new-addr-btn">
+                                        <a href="#"><i class="am-icon-edit"></i>编辑</a>
+                                        <span class="new-addr-bar">|</span>
+                                        <a href="javascript:void(0);" onclick="delClick();" class="delBtn"
+                                           addrid="{{ addrObj.id }}"><i
+                                                class="am-icon-trash"></i>删除</a>
+                                    </div>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    <div class="clear"></div>
+                    <a class="new-abtn-type" data-am-modal="{target: '#doc-modal-1', closeViaDimmer: 0}">添加新地址</a>
+                    <!--例子-->
+                    <div class="" id="doc-modal-1">
+                        <div class="add-dress">
+                            <!--标题 -->
+                            <div class="am-cf am-padding">
+                                <div class="am-fl am-cf"><strong class="am-text-danger am-text-lg">新增地址</strong> /
+                                    <small>Add&nbsp;address</small></div>
+                            </div>
+                            <hr>
+                            <div class="am-u-md-12 am-u-lg-8" style="margin-top: 20px;">
+                                <form id="frm" action="/user/address/" method="post" class="am-form am-form-horizontal">
+                                    {% csrf_token %}
+                                    <div class="am-form-group">
+                                        <label for="user-name" class="am-form-label">收货人</label>
+                                        <div class="am-form-content">
+                                            <input type="text" name="aname" id="user-name" placeholder="收货人">
+                                        </div>
+                                    </div>
+
+                                    <div class="am-form-group">
+                                        <label for="user-phone" class="am-form-label">手机号码</label>
+                                        <div class="am-form-content">
+                                            <input id="user-phone" name="aphone" placeholder="手机号必填" type="email">
+                                        </div>
+                                    </div>
+                                    <div class="am-form-group">
+                                        <label for="user-address" class="am-form-label">所在地</label>
+                                        <div class="am-form-content address">
+                                            <select id="province" onclick="loadCity()">
+                                            </select>
+                                            <select id="city" onclick="loadTown()">
+                                            </select>
+                                            <select id="town">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="am-form-group">
+                                        <label for="user-intro" class="am-form-label">详细地址</label>
+                                        <div class="am-form-content">
+                                            <textarea class="" name="addr" rows="3" id="user-intro" placeholder="输入详细地址"
+                                                      onfocus="fillContent(this)"></textarea>
+                                            <small>100字以内写出你的详细地址...</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="am-form-group">
+                                        <div class="am-u-sm-9 am-u-sm-push-3">
+                                            <a class="am-btn am-btn-danger" onclick="$('#frm').submit();">保存</a>
+                                            <a href="javascript: void(0)" class="am-close am-btn am-btn-danger"
+                                               data-am-modal-close="">取消</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $(".new-option-r").click(function () {
+                            $(this).parent('.user-addresslist').addClass("defaultAddr").siblings().removeClass("defaultAddr");
+                        });
+                        var $ww = $(window).width();
+                        if ($ww > 640) {
+                            $("#doc-modal-1").removeClass("am-modal am-modal-no-btn")
+                        }
+                    })
+                </script>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <section class="model_bg" style="display: none;"></section>
+    <section class="my_model" style="display: none;">
+        <p class="title">删除地址<span class="closeModel">X</span></p>
+        <p>您确认要删除该地址吗？</p>
+        <div class="opBtn"><a href="javascript:;" class="dialog-sure">确定</a><a href="javascript:;" class="dialog-close">关闭</a>
+        </div>
+    </section>
+    {% csrf_token %}
+
+{% endblock %}
+
+{% block footerjs %}
+    <script>
+        function delClick() {
+            var addrid = $('.delBtn').attr('addrid');
+            $('.dialog-sure').attr('addrid', addrid)
+        }
+
+        $('.dialog-sure').click(function (event) {
+            var addrid = $(this).attr('addrid');
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+            var data = {
+                addrid: addrid,
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                flag: 'delete'
+            }
+            $.ajax({
+                type: 'post',
+                url: '/user/address/',
+                data: data,
+                async: false,
+                success: function (result) {
+                    window.location.reload()
+                },
+                error: function (event) {
+                    //停止事件传播
+                    event.stopImmediatePropagation()
+                }
+            })
+        })
+        $('.logout').click(function () {
+            $.get('/user/logout/', function (result) {
+                var flag = result.flag
+                if (flag) {
+                    location.href = '/user/login/'
+                }
+            });
+        });
+
+        $(function () {
+            loadProvince();
+        })
+
+        function loadProvince() {
+            loadArea(0, 'province', loadCity);
+        }
+
+        function loadCity() {
+            loadArea($('#province').val(), 'city', loadTown);
+        }
+
+        function loadTown() {
+            loadArea($('#city').val(), 'town');
+        }
+
+        function loadArea(pid, selectId, nextLoad) {
+            //清空当前select标签内部的原有内容
+            $('#' + selectId).empty();
+            //通过ajax请求获取区划信息
+            $.get('/user/loadAddr/', {'pid': pid}, function (result) {
+                var areaList = JSON.parse(result.jareaList)
+                //遍历areaList
+                for (var i = 0; i < areaList.length; i++) {
+                    var area = areaList[i]
+                    //将数据添加到select标签内部
+                    $('#' + selectId).append('<option value="' + area.pk + '">' + area.fields.areaname + '</option>')
+                }
+                if (nextLoad != null) {
+                    nextLoad();
+                }
+            })
+        }
+
+        function fillContent(txtObj) {
+            //获取用户选择的省市县的区划信息
+            var province = $('#province>option:selected').text();
+            var city = $('#city>option:selected').text();
+            var town = $('#town>option:selected').text();
+            //将区划信息填充到文本域中
+            $(txtObj).val(province + ' ' + city + ' ' + town)
+        }
+
+        $(".new-option-r").click(function () {
+            $(this).parent('.user-addresslist').addClass("defaultAddr").siblings().removeClass("defaultAddr");
+            var addrid = $(this).attr('addrid');
+            var csrfmiddlewaretoken = $('input[name="csrfmiddlewaretoken"]').val();
+            var data = {
+                addrid: addrid,
+                csrfmiddlewaretoken: csrfmiddlewaretoken,
+                flag: 'default'
+            }
+            $.ajax({
+                type: 'post',
+                url: '/user/address/',
+                data: data,
+                async: false,
+                success: function (result) {
+                    window.location.reload()
+                },
+                error: function (event) {
+                    //停止事件传播
+                    event.stopImmediatePropagation()
+                }
+            })
+        });
+    </script>
+
+
+{% endblock %}
